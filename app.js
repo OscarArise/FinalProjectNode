@@ -1,58 +1,30 @@
-
-
 // Cargar variables de entorno
 require('dotenv').config();
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const axios = require('axios'); // Para reCAPTCHA
 
-// Importar rutas existentes
+// Importar rutas
 const contactoRoutes = require('./routes/contactos');
 const solicitudRoutes = require('./routes/solicitudes');
-// Importar la ruta del QR
 const qrRoutes = require('./routes/qr');
-
-// Importar la nueva ruta del mailer
 const mailerRoutes = require('./routes/mailer');
-
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json());
-
-// Montar rutas
-app.use('/api/contactos', contactoRoutes);
-app.use('/api/solicitudes', solicitudRoutes);
-// Montar la ruta de QR: GET /api/qr/:id
-app.use('/api/qr', qrRoutes);
-
-// Montar la nueva ruta del mailer
-app.use('/api/mailer', mailerRoutes);
-
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://localhost:${PORT}`);
-});
-
-const express = require('express');
-const app = express();
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const axios = require('axios');  // Importa Axios para hacer la solicitud a Google
-
-const contactoRoutes = require('./routes/contactos');
-const solicitudRoutes = require('./routes/solicitudes');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// Rutas de la API
+// Montar rutas principales
 app.use('/api/contactos', contactoRoutes);
 app.use('/api/solicitudes', solicitudRoutes);
+app.use('/api/qr', qrRoutes);
+app.use('/api/mailer', mailerRoutes);
 
-// Ruta para login
+// Ruta para login con reCAPTCHA
 app.post('/api/login', async (req, res) => {
   const { username, password, recaptchaToken } = req.body;
 
@@ -60,8 +32,8 @@ app.post('/api/login', async (req, res) => {
     return res.status(400).json({ message: 'Token de reCAPTCHA faltante' });
   }
 
-  // Verificación del token de reCAPTCHA con la API de Google
-  const secretKey = '6LdmEF8rAAAAABW2VCYBp_IGP7DOIIRcTU8E-IyV';  // Sustituye con tu secret key de Google reCAPTCHA
+  const secretKey = '6LdmEF8rAAAAABW2VCYBp_IGP7DOIIRcTU8E-IyV'; // Sustituye con tu clave real
+
   try {
     const response = await axios.post(
       `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`
@@ -71,7 +43,7 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ message: 'reCAPTCHA no válido' });
     }
 
-    // Lógica para verificar el login (aquí puedes agregar tu lógica de autenticación de usuarios)
+    // Aquí iría la lógica de autenticación
     res.status(200).json({ message: 'Login exitoso' });
   } catch (error) {
     console.error('Error al verificar el reCAPTCHA:', error);
@@ -79,7 +51,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Ruta para registro de usuario
+// Ruta para registro de usuario con reCAPTCHA
 app.post('/api/register', async (req, res) => {
   const { nombre, email, password, recaptchaToken } = req.body;
 
@@ -87,8 +59,8 @@ app.post('/api/register', async (req, res) => {
     return res.status(400).json({ message: 'Token de reCAPTCHA faltante' });
   }
 
-  // Verificación del token de reCAPTCHA con la API de Google
-  const secretKey = '6LdmEF8rAAAAABW2VCYBp_IGP7DOIIRcTU8E-IyV';  // Sustituye con tu secret key de Google reCAPTCHA
+  const secretKey = '6LdmEF8rAAAAABW2VCYBp_IGP7DOIIRcTU8E-IyV'; // Sustituye con tu clave real
+
   try {
     const response = await axios.post(
       `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaToken}`
@@ -98,9 +70,9 @@ app.post('/api/register', async (req, res) => {
       return res.status(400).json({ message: 'reCAPTCHA no válido' });
     }
 
-    // Lógica para registrar el usuario (agregar la lógica de registro aquí)
+    // Aquí iría la lógica de registro
     res.status(200).json({ message: 'Registro exitoso' });
-  } catch (error) { 
+  } catch (error) {
     console.error('Error al verificar el reCAPTCHA:', error);
     return res.status(500).json({ message: 'Error al verificar el reCAPTCHA' });
   }
