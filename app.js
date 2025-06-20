@@ -64,7 +64,7 @@ app.post('/api/register', async (req, res) => {
 
     // Lógica para registrar el usuario (agregar la lógica de registro aquí)
     res.status(200).json({ message: 'Registro exitoso' });
-  } catch (error) {
+  } catch (error) { 
     console.error('Error al verificar el reCAPTCHA:', error);
     return res.status(500).json({ message: 'Error al verificar el reCAPTCHA' });
   }
