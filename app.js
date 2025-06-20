@@ -1,3 +1,7 @@
+
+
+// Cargar variables de entorno
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -9,6 +13,9 @@ const solicitudRoutes = require('./routes/solicitudes');
 // Importar la ruta del QR
 const qrRoutes = require('./routes/qr');
 
+// Importar la nueva ruta del mailer
+const mailerRoutes = require('./routes/mailer');
+
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
@@ -18,6 +25,9 @@ app.use('/api/contactos', contactoRoutes);
 app.use('/api/solicitudes', solicitudRoutes);
 // Montar la ruta de QR: GET /api/qr/:id
 app.use('/api/qr', qrRoutes);
+
+// Montar la nueva ruta del mailer
+app.use('/api/mailer', mailerRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
