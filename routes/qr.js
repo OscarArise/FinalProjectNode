@@ -1,28 +1,24 @@
-// routes/qr.js
 const express = require('express');
 const router = express.Router();
-const { db } = require('../models/firebase');  // Ajusta la ruta si tu firebase está en otra carpeta
-const collection = db.collection('solicitudes');
+const { db } = require('../models/firebase');
+const collection = db.collection('contactos');
 
-// GET /api/qr/:id
-// Devuelve los datos de una solicitud para codificarlos en el QR
 router.get('/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const docRef = collection.doc(id);
-    const docSnap = await docRef.get();
+    const doc = await collection.doc(req.params.id).get();
 
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: 'Solicitud no encontrada' });
+    if (!doc.exists) {
+      return res.status(404).json({ error: 'Documento no encontrado' });
     }
 
-    // Extraemos los datos
-    const data = docSnap.data();
-    return res.json(data);
+    // Retorna el documento con su ID como parte del JSON
+    res.status(200).json({ id: doc.id, ...doc.data() });
+
   } catch (error) {
-    console.error('Error al obtener solicitud para QR:', error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+    res.status(500).json({ error: error.message });
   }
 });
+
+
 
 module.exports = router;
