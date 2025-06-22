@@ -14,6 +14,9 @@ router.get('/:id', async (req, res) => {
     // Retorna el documento con su ID como parte del JSON
     res.status(200).json({ id: doc.id, ...doc.data() });
 
+    //const snapshot = await collection.where('id', '==', req.params.id).get();
+    //const contactos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    //res.status(200).json(contactos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

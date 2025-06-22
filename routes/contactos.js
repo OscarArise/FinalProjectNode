@@ -4,6 +4,7 @@ const router = express.Router();
 const { db } = require('../models/firebase');
 const collection = db.collection('contactos');
 
+// POST: Crear un contacto
 router.post(
   '/',
   [
@@ -28,7 +29,7 @@ router.post(
   }
 );
 
-// Obtener todos los contactos
+// GET: Obtener todos los contactos
 router.get('/', async (req, res) => {
   try {
     const snapshot = await collection.get();
@@ -39,7 +40,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Obtener contactos por usuario
+// GET: Obtener contactos por usuario
 router.get('/usuario/:usuarioId', async (req, res) => {
   try {
     const snapshot = await collection.where('usuarioId', '==', req.params.usuarioId).get();
@@ -50,7 +51,7 @@ router.get('/usuario/:usuarioId', async (req, res) => {
   }
 });
 
-// Editar un contacto
+// PUT: Editar un contacto
 router.put('/:id', [
   body('nombre').isLength({ min: 5 }),
   body('email').isEmail().isLength({ min: 4 }),
@@ -70,7 +71,7 @@ router.put('/:id', [
   }
 });
 
-// Eliminar un contacto
+// DELETE: Eliminar un contacto
 router.delete('/:id', async (req, res) => {
   try {
     await collection.doc(req.params.id).delete();
